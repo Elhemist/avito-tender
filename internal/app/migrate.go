@@ -46,7 +46,6 @@ func Migrations() {
 		log.Fatalf("Migrate: postgres connect error: %s", err)
 	}
 
-	err = m.Down()
 	err = m.Up()
 	defer m.Close()
 	if err != nil && !errors.Is(err, migrate.ErrNoChange) {
