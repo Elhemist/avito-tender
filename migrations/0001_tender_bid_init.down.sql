@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS bid;
+
+DROP TABLE IF EXISTS tender;
+
+DROP TABLE IF EXISTS bid_history;
+
+DROP TABLE IF EXISTS tender_history;
