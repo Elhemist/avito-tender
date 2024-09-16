@@ -1,19 +1,19 @@
-INSERT INTO employee (username, first_name, last_name)
+INSERT INTO employee (id, username, first_name, last_name)
 VALUES 
-    ('ivanov', 'Иван', 'Иванов'),
-    ('petrov', 'Петр', 'Петров'),
-    ('saveliy', 'Савелий', 'Савельев'),
-    ('nikolaev', 'Николай', 'Николаев');
+    ('10000000-0000-0000-0000-000000000000', 'ivanov', 'Иван', 'Иванов'),
+    ('10000000-0000-0000-0000-000000000001', 'petrov', 'Петр', 'Петров'),
+    ('10000000-0000-0000-0000-000000000002', 'saveliy', 'Савелий', 'Савельев'),
+    ('10000000-0000-0000-0000-000000000003', 'nikolaev', 'Николай', 'Николаев');
 
-INSERT INTO organization (name, description, type)
+INSERT INTO organization (id, name, description, type)
 VALUES 
-    ('Рога и Копыта', 'Рога и Копыта', 'LLC'),
-    ('Сибирские Леса', 'Лиса', 'JSC'),
-    ('Торговый Дом "Голандский сыр"', 'Я не безуумец.', 'IE');
+    ('00000000-0000-0000-0000-000000000000', 'Рога и Копыта', 'Рога и Копыта', 'LLC'),
+    ('00000000-0000-0000-0000-000000000001', 'Сибирские Леса', 'Лиса', 'JSC'),
+    ('00000000-0000-0000-0000-000000000002', 'Торговый Дом "Голандский сыр"', 'Не будет у вас другого)', 'IE');
 
 INSERT INTO organization_responsible (organization_id, user_id)
 VALUES 
-    ((SELECT id FROM organization WHERE name = 'Рога и Копыта'), (SELECT id FROM employee WHERE username = 'ivanov')),
-    ((SELECT id FROM organization WHERE name = 'Сибирские Леса'), (SELECT id FROM employee WHERE username = 'petrov')),
-    ((SELECT id FROM organization WHERE name = 'Торговый Дом "Голандский сыр"'), (SELECT id FROM employee WHERE username = 'sidorov')),
-    ((SELECT id FROM organization WHERE name = 'Рога и Копыта'), (SELECT id FROM employee WHERE username = 'nikolaev'));
+    ('00000000-0000-0000-0000-000000000000', '10000000-0000-0000-0000-000000000000'),
+    ('00000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000000'),
+    ('00000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000000'),
+    ('00000000-0000-0000-0000-000000000000', '10000000-0000-0000-0000-000000000000');
