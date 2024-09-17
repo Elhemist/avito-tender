@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/sirupsen/logrus"
 )
 
 type TenderService struct {
@@ -27,17 +26,21 @@ func (s *TenderService) GetUserTenders(username string) ([]models.Tender, error)
 }
 
 func (s *TenderService) CreateTender(tender models.Tender) (models.Tender, error) {
-	logrus.Info("проверка прав ", "debug")
 	err := s.checkUserRights(tender.CreatorUsername, tender.OrganizationID)
 	if err != nil {
 		return models.Tender{}, err
 	}
-	logrus.Info("проверили права ", "debug", err)
-
 	return s.tenderRepo.CreateTender(tender)
 }
 
 func (s *TenderService) EditTender(tenderid int, tender models.UpdateTenderRequest) (models.Tender, error) {
+	exist, err := s.tenderRepo.DoesTenderExists(tenderid)
+	if err != nil {
+		return models.Tender{}, err
+	}
+	if !exist {
+		return models.Tender{}, NO_TENDER
+	}
 
 	return s.tenderRepo.EditTender(tenderid, tender)
 }
@@ -54,24 +57,17 @@ func (s *TenderService) RollbackTender(tenderId int, versionId int) (models.Tend
 
 func (s *TenderService) checkUserRights(usename string, organizationId uuid.UUID) error {
 
-	logrus.Info("проверяем имя ", "debug ")
 	userId, err := s.employeeRepo.GetUserIdByUsername(usename)
 	if err != nil {
-		return err
+		return NO_USER
 	}
 
-	logrus.Info("проверяем доступ", "debug")
 	access, err := s.employeeRepo.CheckUserOrganization(userId, organizationId)
 	if !access {
 		return fmt.Errorf("access denied")
 	}
 	if err != nil {
 		return err
-	}
-
-	logrus.Info("сверяем доступ", "debug")
-	if !access {
-		return fmt.Errorf("access denied")
 	}
 	return nil
 }

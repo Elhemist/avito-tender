@@ -14,6 +14,7 @@ type Tender interface {
 	EditTender(tenderId int, tender models.UpdateTenderRequest) (models.Tender, error)
 	RollbackTender(tender models.Tender) error
 	GetHistoryTender(tenderId int, version int) (models.Tender, error)
+	DoesTenderExists(tenderId int) (bool, error)
 }
 
 type Bid interface {
@@ -24,6 +25,7 @@ type Bid interface {
 	EditBid(bidId int, bid models.UpdateBidRequest) (models.Bid, error)
 	GetHistoryBid(bidId int, version int) (models.Bid, error)
 	RollbackBid(bid models.Bid) error
+	DoesBidExists(bidId int) (bool, error)
 }
 
 type Employee interface {

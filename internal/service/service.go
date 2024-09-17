@@ -5,6 +5,12 @@ import (
 	"avito-tender/internal/repository"
 )
 
+const NO_TENDER = NotExistError("No tenders with this id exist")
+const NO_BID = NotExistError("No bid with this id exist")
+const NO_USER = NotExistError("No such user exist ")
+
+type NotExistError string
+
 type Tender interface {
 	GetAllTenders() ([]models.Tender, error)
 	GetUserTenders(username string) ([]models.Tender, error)
@@ -24,9 +30,13 @@ type Service struct {
 	Bid
 }
 
+func (e NotExistError) Error() string {
+	return string(e)
+}
+
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
 		Tender: NewTenderService(repos.Tender, repos.Employee),
-		Bid:    NewBidService(repos.Bid, repos.Employee),
+		Bid:    NewBidService(repos.Bid, repos.Employee, repos.Tender),
 	}
 }

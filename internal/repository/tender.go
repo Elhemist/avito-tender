@@ -8,7 +8,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
-	"github.com/sirupsen/logrus"
 )
 
 type historyTender struct {
@@ -56,8 +55,6 @@ func (r *TenderPostgres) CreateTender(tender models.Tender) (models.Tender, erro
 		return tender, err
 	}
 
-	logrus.Info("встувили ", "debug", err)
-
 	err = r.AddTenderToHistory(tender)
 
 	return tender, err
@@ -71,7 +68,6 @@ func (r *TenderPostgres) EditTender(tenderId int, tender models.UpdateTenderRequ
 	}
 
 	query := fmt.Sprintf("UPDATE %s SET", tenderTable)
-	args := []interface{}{}
 	if tender.Name != nil {
 		query += ` name = '` + *tender.Name + `',`
 	}
@@ -97,21 +93,16 @@ func (r *TenderPostgres) EditTender(tenderId int, tender models.UpdateTenderRequ
 	query += `, updated_at = NOW()`
 
 	query += ` WHERE id = $1`
-	logrus.Info("debug3", query)
-	logrus.Info("debug4", args)
 	_, err = r.db.Exec(query, tenderId)
 	if err != nil {
-		logrus.Info("debug 123", query)
 		return models.Tender{}, err
 	}
 
 	query = fmt.Sprintf("SELECT * FROM %s WHERE id = $1", tenderTable)
 	err = r.db.Get(&tenderNew, query, tenderId)
 	if err != nil {
-		logrus.Info("debug 1234", query)
 		return models.Tender{}, err
 	}
-	logrus.Info("debug 1235325", query)
 
 	err = r.AddTenderToHistory(tenderNew)
 
@@ -153,4 +144,11 @@ func (r *TenderPostgres) GetHistoryTender(tenderId int, version int) (models.Ten
 		CreatedAt:       historyTender.CreatedAt,
 		UpdatedAt:       historyTender.UpdatedAt}
 	return tender, err
+}
+
+func (r *TenderPostgres) DoesTenderExists(tenderId int) (bool, error) {
+	var exists bool
+	query := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE id=$1)", tenderTable)
+	err := r.db.QueryRow(query, tenderId).Scan(&exists)
+	return exists, err
 }

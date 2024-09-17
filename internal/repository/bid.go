@@ -149,3 +149,10 @@ func (r *BidPostgres) RollbackBid(bid models.Bid) error {
 	_, err := r.db.Exec(query, bid.Name, bid.Description, bid.Status, bid.OrganizationID, bid.CreatorUsername, bid.TenderID, bid.Version, bid.ID)
 	return err
 }
+
+func (r *BidPostgres) DoesBidExists(bidId int) (bool, error) {
+	var exists bool
+	query := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE id=$1)", bidTable)
+	err := r.db.QueryRow(query, bidId).Scan(&exists)
+	return exists, err
+}
